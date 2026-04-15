@@ -47,16 +47,16 @@ public class DataverseApiServiceImpl implements DataverseApiService {
     }
 
     @Override
-    public void completeWorkflow(String invocationId, String reason, String message) throws IOException, DataverseException {
+    public void resumeWorkflow(String invocationId, String reason, String message) throws IOException, DataverseException {
         var resumeMessage = new ResumeMessage("Success", reason, message);
-        log.info("Completing workflow with status Success, invocation id is {}", invocationId);
+        log.info("Resuming workflow with status Success for this step, invocation id is {}", invocationId);
         this.client.workflows().resume(invocationId, resumeMessage);
     }
 
     @Override
     public void failWorkflow(String invocationId, String reason, String message) throws IOException, DataverseException {
         var resumeMessage = new ResumeMessage("Failure", reason, message);
-        log.warn("Completing workflow with status Failure, reason is '{}', message is '{}', invocation id is {}", reason, message, invocationId);
+        log.warn("Resuming workflow with status Failure for this step, reason is '{}', message is '{}', invocation id is {}", reason, message, invocationId);
         this.client.workflows().resume(invocationId, resumeMessage);
     }
 

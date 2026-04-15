@@ -20,7 +20,6 @@ import nl.knaw.dans.lib.dataverse.model.file.FileMeta;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 public interface DataverseApiService {
@@ -29,7 +28,7 @@ public interface DataverseApiService {
 
     <T> T getFile(int fileId, HttpClientResponseHandler<T> handler) throws IOException, DataverseException;
 
-    void completeWorkflow(String invocationId, String reason, String message) throws IOException, DataverseException;
+    void resumeWorkflow(String invocationId, String reason, String message) throws IOException, DataverseException;
 
     void failWorkflow(String invocationId, String reason, String message) throws IOException, DataverseException;
 

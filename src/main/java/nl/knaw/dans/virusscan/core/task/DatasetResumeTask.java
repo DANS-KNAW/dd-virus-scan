@@ -24,7 +24,6 @@ import nl.knaw.dans.virusscan.core.service.DataverseApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ public class DatasetResumeTask implements Runnable {
 
         if (payload.getMatches().isEmpty()) {
             log.info("Dataset with id {} and invocation ID {} is clean", payload.getId(), payload.getInvocationId());
-            dataverseApiService.completeWorkflow(payload.getInvocationId(), "Virus scan workflow completed",
+            dataverseApiService.resumeWorkflow(payload.getInvocationId(), "Virus scan workflow completed",
                 "An external workflow to scan for viruses has completed and found no threats in the dataset");
 
         }
@@ -95,10 +94,10 @@ public class DatasetResumeTask implements Runnable {
             payload.getMatches().entrySet().forEach(file -> {
                 var filename = file.getKey().getDataFile().getFilename();
                 var errors = String.join(" and ", file.getValue());
-                log.info("Dataset file {} contains match: {}", filename, errors);
+                log.warn("Dataset file {} contains match: {}", filename, errors);
             });
 
-            dataverseApiService.failWorkflow(payload.getInvocationId(), messages, messages);
+            dataverseApiService.failWorkflow(payload.getInvocationId(), "Virus scan", "Virus found in dataset: " + messages);
         }
     }
 

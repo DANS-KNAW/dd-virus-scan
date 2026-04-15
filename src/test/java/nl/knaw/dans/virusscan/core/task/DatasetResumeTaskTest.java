@@ -102,7 +102,7 @@ class DatasetResumeTaskTest {
 
         task.runTask();
 
-        Mockito.verify(dataverseApiService).completeWorkflow(Mockito.eq("invocation_id"), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(dataverseApiService).resumeWorkflow(Mockito.eq("invocation_id"), Mockito.anyString(), Mockito.anyString());
         Mockito.verifyNoMoreInteractions(dataverseApiService);
     }
 
