@@ -53,7 +53,7 @@ public class ClamdServiceImpl implements ClamdService {
     }
 
     void writeChunk(OutputStream outputStream, byte[] buffer, int bufferSize) throws IOException {
-        // create a 4 byte sequence indicating the size of the payload (in network byte order)
+        // create a 4-byte sequence indicating the size of the payload (in network byte order)
         var header = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(bufferSize).array();
 
         //log.debug("Writing buffer size header (value is {}) to output stream", bufferSize);
@@ -112,7 +112,7 @@ public class ClamdServiceImpl implements ClamdService {
                         for (var i = start; i < bytesRead; ++i) {
                             overlapBufferOutputStream.write(buffer[i]);
                         }
-                        // do math to get the correct amount of bytes to copy
+                        // do math to get the correct number of bytes to copy
                         // start is max(0, threshold - bytesWritten + bytesRead)
                         // say the threshold is 100
                         // we have written 110 bytes in total now
