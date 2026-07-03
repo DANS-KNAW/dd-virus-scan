@@ -28,6 +28,7 @@ import nl.knaw.dans.virusscan.core.service.VirusScannerImpl;
 import nl.knaw.dans.virusscan.health.ClamdHealthCheck;
 import nl.knaw.dans.virusscan.resource.InvokeResourceImpl;
 import nl.knaw.dans.virusscan.resource.RollbackResourceImpl;
+import nl.knaw.dans.virusscan.resource.ScanResourceImpl;
 
 public class DdVirusScanApplication extends Application<DdVirusScanConfig> {
 
@@ -54,6 +55,7 @@ public class DdVirusScanApplication extends Application<DdVirusScanConfig> {
 
         environment.jersey().register(new InvokeResourceImpl(datasetScanTaskFactory));
         environment.jersey().register(new RollbackResourceImpl());
+        environment.jersey().register(new ScanResourceImpl());
 
         environment.healthChecks().register("Clamd", new ClamdHealthCheck(clamdService));
         environment.healthChecks().register("Dataverse", new DataverseHealthCheck(dataverseClient));
