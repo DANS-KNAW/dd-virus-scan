@@ -49,7 +49,7 @@ class DatasetScanTaskTest {
         Mockito.when(dataverseApiService.listFiles(Mockito.any(), Mockito.any(), Mockito.any()))
             .thenReturn(result.getData());
 
-        Mockito.when(dataverseApiService.getFile(Mockito.anyInt(), Mockito.any()))
+        Mockito.when(dataverseApiService.getFile(Mockito.anyLong(), Mockito.any()))
             .thenReturn(new ArrayList<>());
 
         var task = new DatasetScanTask(dataverseApiService, virusScanner, payload, datasetResumeTaskFactory);
@@ -81,10 +81,10 @@ class DatasetScanTaskTest {
         Mockito.when(dataverseApiService.listFiles(Mockito.any(), Mockito.any(), Mockito.any()))
             .thenReturn(data);
 
-        Mockito.when(dataverseApiService.getFile(eq(4), Mockito.any()))
+        Mockito.when(dataverseApiService.getFile(eq(4L), Mockito.any()))
             .thenReturn(List.of("virus!"));
 
-        Mockito.when(dataverseApiService.getFile(not(eq(4)), Mockito.any()))
+        Mockito.when(dataverseApiService.getFile(not(eq(4L)), Mockito.any()))
             .thenReturn(new ArrayList<>());
 
         var task = new DatasetScanTask(dataverseApiService, virusScanner, payload, datasetResumeTaskFactory);

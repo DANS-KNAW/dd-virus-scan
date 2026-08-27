@@ -26,7 +26,7 @@ public interface DataverseApiService {
 
     List<FileMeta> listFiles(String datasetId, String invocationId, String version) throws IOException, DataverseException;
 
-    <T> T getFile(int fileId, HttpClientResponseHandler<T> handler) throws IOException, DataverseException;
+    <T> T getFile(long fileId, HttpClientResponseHandler<T> handler) throws IOException, DataverseException;
 
     void resumeWorkflow(String invocationId, String reason, String message) throws IOException, DataverseException;
 

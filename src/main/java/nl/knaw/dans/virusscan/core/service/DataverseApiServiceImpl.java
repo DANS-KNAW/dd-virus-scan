@@ -41,7 +41,7 @@ public class DataverseApiServiceImpl implements DataverseApiService {
     }
 
     @Override
-    public <T> T getFile(int fileId, HttpClientResponseHandler<T> handler) throws IOException, DataverseException {
+    public <T> T getFile(long fileId, HttpClientResponseHandler<T> handler) throws IOException, DataverseException {
         log.debug("Getting file with id {}", fileId);
         return client.basicFileAccess(fileId).getFile(handler);
     }
