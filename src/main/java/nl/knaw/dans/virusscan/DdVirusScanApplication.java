@@ -24,6 +24,8 @@ import nl.knaw.dans.virusscan.core.service.ClamdServiceImpl;
 import nl.knaw.dans.virusscan.core.service.DatasetResumeTaskFactoryImpl;
 import nl.knaw.dans.virusscan.core.service.DatasetScanTaskFactoryImpl;
 import nl.knaw.dans.virusscan.core.service.DataverseApiServiceImpl;
+import nl.knaw.dans.virusscan.core.service.FileScanTaskFactoryImpl;
+import nl.knaw.dans.virusscan.core.service.ScanJobStoreImpl;
 import nl.knaw.dans.virusscan.core.service.VirusScannerImpl;
 import nl.knaw.dans.virusscan.health.ClamdHealthCheck;
 import nl.knaw.dans.virusscan.resource.InvokeResourceImpl;
@@ -53,9 +55,12 @@ public class DdVirusScanApplication extends Application<DdVirusScanConfig> {
         var datasetResumeTaskFactory = new DatasetResumeTaskFactoryImpl(dataverseApiService, resumeDatasetTaskQueue, configuration.getVirusscanner().getResumeTasks());
         var datasetScanTaskFactory = new DatasetScanTaskFactoryImpl(dataverseApiService, virusScanner, scanDatasetTaskQueue, datasetResumeTaskFactory);
 
+        var scanJobStore = new ScanJobStoreImpl();
+        var fileScanTaskFactory = new FileScanTaskFactoryImpl(dataverseApiService, virusScanner, scanJobStore, scanDatasetTaskQueue);
+
         environment.jersey().register(new InvokeResourceImpl(datasetScanTaskFactory));
         environment.jersey().register(new RollbackResourceImpl());
-        environment.jersey().register(new ScanResourceImpl());
+        environment.jersey().register(new ScanResourceImpl(fileScanTaskFactory, scanJobStore));
 
         environment.healthChecks().register("Clamd", new ClamdHealthCheck(clamdService));
         environment.healthChecks().register("Dataverse", new DataverseHealthCheck(dataverseClient));

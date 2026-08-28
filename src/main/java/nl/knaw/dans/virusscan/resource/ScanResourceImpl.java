@@ -16,23 +16,38 @@
 package nl.knaw.dans.virusscan.resource;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.knaw.dans.virusscan.api.FileScanResultDto;
 import nl.knaw.dans.virusscan.api.ScanJobStatusDto;
 import nl.knaw.dans.virusscan.api.StartDatasetScanRequestDto;
 import nl.knaw.dans.virusscan.api.StartFileScanRequestDto;
 import nl.knaw.dans.virusscan.api.StartScanResponseDto;
+import nl.knaw.dans.virusscan.core.model.FileScanResult;
+import nl.knaw.dans.virusscan.core.model.ScanJobStatus;
+import nl.knaw.dans.virusscan.core.service.FileScanTaskFactory;
+import nl.knaw.dans.virusscan.core.service.ScanJobStore;
 import nl.knaw.dans.virusscan.resources.ScanApi;
 
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
 public class ScanResourceImpl implements ScanApi {
 
+    private final FileScanTaskFactory fileScanTaskFactory;
+    private final ScanJobStore scanJobStore;
+
+    public ScanResourceImpl(FileScanTaskFactory fileScanTaskFactory, ScanJobStore scanJobStore) {
+        this.fileScanTaskFactory = fileScanTaskFactory;
+        this.scanJobStore = scanJobStore;
+    }
+
     @Override
     public Response getScanJobStatus(UUID jobId) {
-        log.info("Received request for scan job status: {}", jobId);
-        // TODO: implement
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        log.debug("Received request for scan job status: {}", jobId);
+        return scanJobStore.get(jobId)
+            .map(job -> Response.ok(toDto(job)).build())
+            .orElse(Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @Override
@@ -44,8 +59,30 @@ public class ScanResourceImpl implements ScanApi {
 
     @Override
     public Response startFileScan(StartFileScanRequestDto startFileScanRequestDto) {
-        log.info("Received request to start file scan: {}", startFileScanRequestDto);
-        // TODO: implement
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        log.info("Received request to start file scan for {} files", startFileScanRequestDto.getFileIds().size());
+        var jobId = fileScanTaskFactory.startTask(startFileScanRequestDto.getFileIds());
+        return Response.status(Response.Status.ACCEPTED).entity(new StartScanResponseDto(jobId)).build();
+    }
+
+    private ScanJobStatusDto toDto(ScanJobStatus job) {
+        return new ScanJobStatusDto(
+            job.getJobId(),
+            ScanJobStatusDto.StatusEnum.fromValue(job.getStatus().name()),
+            job.getTotalFiles(),
+            job.getProcessedFiles(),
+            toResultDtos(job.getResults())
+        );
+    }
+
+    private List<FileScanResultDto> toResultDtos(List<FileScanResult> results) {
+        return results.stream()
+            .map(r -> new FileScanResultDto(
+                r.getFileId(),
+                r.getFileName(),
+                FileScanResultDto.StatusEnum.fromValue(r.getStatus().name()),
+                r.getViruses()
+            ))
+            .toList();
     }
 }
+
