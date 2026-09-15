@@ -30,7 +30,7 @@
 
     <name>DD Virus Scan</name>
     <description>Service for scanning Dataverse datasets for virus</description>
-    <url>https://github.com/DANS-KNAW/dd-virus-scan</url>
+    <url>https://dans-knaw.github.io/dd-virus-scan</url>
     <inceptionYear>2022</inceptionYear>
 
     <scm>
